@@ -28,7 +28,7 @@ const model = function (rsName) {
     });
   };
 
-  promiseReadFile('./generate/ex-model.js', { encoding: 'utf8' })
+  promiseReadFile('./generate/templates/ex-model.js', { encoding: 'utf8' })
     .then((data) => {
       return transform(data, rsName);
     })

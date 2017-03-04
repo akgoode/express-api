@@ -29,7 +29,7 @@ const controller = function (rsName) {
     });
   };
 
-  promiseReadFile('./generate/ex-controller.js', { encoding: 'utf8' })
+  promiseReadFile('./generate/templates/ex-controller.js', { encoding: 'utf8' })
     .then((data) => {
       return transform(data, rsName);
     })
