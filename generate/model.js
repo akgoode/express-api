@@ -1,28 +1,24 @@
 'use strict';
 
 const fs = require('fs');
-const rsName = process.argv[2];
-const singleName = rsName.slice(0, rsName.length - 1);
 
-const replaceWord = function (word) {
-  if (word.toLowerCase() === 'example' || word.toLowerCase() === 'examples' || word.toLowerCase() === 'exampleschema') {
+const replaceWord = function (word, singleName) {
+  if (word.toLowerCase() === 'example' || word.toLowerCase() === 'exampleschema') {
     switch (word) {
       case 'exampleSchema':
         return singleName + 'Schema';
       case 'Example':
-        let capital = rsName.charAt(0).toUpperCase() + rsName.slice(1, rsName.length - 1);
+        let capital = singleName.charAt(0).toUpperCase() + singleName.slice(1, singleName.length);
         return capital;
       case 'example':
-        return rsName.slice(0, rsName.length - 1);
-      case 'examples':
-        return rsName;
+        return singleName;
     }
   }
   return word;
 };
 
-const model = function (filename, outFileFlag) {
-
+const model = function (rsName) {
+  const singleName = rsName.slice(0, rsName.length - 1);
   const promiseReadFile = function (inFile, options) {
     return new Promise( (resolve, reject) => {
       fs.readFile(inFile, options, (error, data) => {
@@ -49,22 +45,17 @@ const model = function (filename, outFileFlag) {
 
   promiseReadFile('./app/models/example.js', { encoding: 'utf8' })
     .then((data) => {
-      let newArray = [];
       let words = data.split(/([^A-Za-z])/);
-      // console.log(words);
-      words.forEach((word) => {
+      return words.map((word) => {
         if((/\w+/).test(word)) {
-          newArray.push(replaceWord(word));
-          return;
+          return replaceWord(word, singleName);
         }
-        newArray.push(word);
-      });
-      return newArray.join('');
+        return word;
+      }).join('');
     })
-    .then((js) => promiseWriteFile('./app/models/' + singleName + '.js', js, outFileFlag))
+    .then((js) => promiseWriteFile('./app/models/' + singleName + '.js', js, 'w'))
     .catch(console.error)
     ;
 };
-// console.log(replaceWord('Example'));
 
 module.exports = model;

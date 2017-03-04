@@ -1,9 +1,8 @@
 'use strict';
 
 const fs = require('fs');
-const rsName = process.argv[2];
 
-const replaceWord = function (word) {
+const replaceWord = function (word, rsName) {
   if (word.toLowerCase() === 'example' || word.toLowerCase() === 'examples') {
     switch (word) {
       case 'Example':
@@ -18,7 +17,7 @@ const replaceWord = function (word) {
   return word;
 };
 
-const controller = function (filename, outFileFlag) {
+const controller = function (rsName) {
 
   const promiseReadFile = function (inFile, options) {
     return new Promise( (resolve, reject) => {
@@ -46,19 +45,15 @@ const controller = function (filename, outFileFlag) {
 
   promiseReadFile('./app/controllers/examples.js', { encoding: 'utf8' })
     .then((data) => {
-      let newArray = [];
       let words = data.split(/([^A-Za-z])/);
-      // console.log(words);
-      words.forEach((word) => {
+      return words.map((word) => {
         if((/\w+/).test(word)) {
-          newArray.push(replaceWord(word));
-          return;
+          return replaceWord(word, rsName);
         }
-        newArray.push(word);
-      });
-      return newArray.join('');
+        return word;
+      }).join('');
     })
-    .then((js) => promiseWriteFile('./app/controllers/' + filename + '.js', js, outFileFlag))
+    .then((js) => promiseWriteFile('./app/controllers/' + rsName + '.js', js, 'w'))
     .catch(console.error)
     ;
 };
