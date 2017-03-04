@@ -1,21 +1,7 @@
 'use strict';
 
 const fs = require('fs');
-
-const replaceWord = function (word, rsName) {
-  if (word.toLowerCase() === 'example' || word.toLowerCase() === 'examples') {
-    switch (word) {
-      case 'Example':
-        let capital = rsName.charAt(0).toUpperCase() + rsName.slice(1, rsName.length - 1);
-        return capital;
-      case 'example':
-        return rsName.slice(0, rsName.length - 1);
-      case 'examples':
-        return rsName;
-    }
-  }
-  return word;
-};
+const transform = require('./transform');
 
 const controller = function (rsName) {
 
@@ -43,17 +29,11 @@ const controller = function (rsName) {
     });
   };
 
-  promiseReadFile('./app/controllers/examples.js', { encoding: 'utf8' })
+  promiseReadFile('./generate/ex-controller.js', { encoding: 'utf8' })
     .then((data) => {
-      let words = data.split(/([^A-Za-z])/);
-      return words.map((word) => {
-        if((/\w+/).test(word)) {
-          return replaceWord(word, rsName);
-        }
-        return word;
-      }).join('');
+      return transform(data, rsName);
     })
-    .then((js) => promiseWriteFile('./app/controllers/' + rsName + '.js', js, 'w'))
+    .then((js) => promiseWriteFile('./app/controllers/' + rsName[0] + '.js', js, 'w'))
     .catch(console.error)
     ;
 };
