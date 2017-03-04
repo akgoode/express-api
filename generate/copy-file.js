@@ -3,7 +3,9 @@
 const fs = require('fs');
 const transform = require('./transform');
 
-const controller = function (rsName) {
+module.exports = function (type, rsName) {
+
+  let typeNum = (type === 'controller') ? 0 : 1;
 
   const promiseReadFile = function (inFile, options) {
     return new Promise( (resolve, reject) => {
@@ -29,13 +31,11 @@ const controller = function (rsName) {
     });
   };
 
-  promiseReadFile('./generate/templates/ex-controller.js', { encoding: 'utf8' })
+  promiseReadFile('./generate/templates/ex-' + type + '.js', { encoding: 'utf8' })
     .then((data) => {
       return transform(data, rsName);
     })
-    .then((js) => promiseWriteFile('./app/controllers/' + rsName[0] + '.js', js, 'w'))
+    .then((js) => promiseWriteFile('./app/' + type + 's/' + rsName[typeNum] + '.js', js, 'w'))
     .catch(console.error)
     ;
 };
-
-module.exports = controller;
