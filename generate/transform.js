@@ -1,7 +1,7 @@
 'use strict';
 
 const replace = function (word, rsName) {
-  if (word.toLowerCase() === 'example' || word.toLowerCase() === 'examples' || word.toLowerCase() === 'exampleschema') {
+  if (word.toLowerCase() === 'example' || word === 'examples' || word === 'exampleSchema') {
     switch (word) {
       case 'exampleSchema':
         return rsName[3];
